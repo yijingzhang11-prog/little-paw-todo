@@ -125,7 +125,7 @@ function updatePet(progress){
   if(lastPet!==p){$('petImages').replaceChildren();for(const mood of ['idle',...MOODS]){const img=document.createElement('img');img.src=mood==='idle'?p.base:p.moods[mood];img.dataset.mood=mood;img.alt=(p.name||'毛孩子')+' · '+(mood==='idle'?'初始等待':labels[mood][0]);$('petImages').append(img);}lastPet=p;}
   for(const img of $('petImages').children){const visible=img.dataset.mood===progress.mood;img.classList.toggle('visible',visible);img.setAttribute('aria-hidden',String(!visible));}
   $('petName').textContent=(p.name||'我的毛孩子')+' · 陪你一起';
-  const messages={idle:'还没有待办，今天慢慢来。',sad:'还没开始也没关系，我陪你。',waiting:'已经迈出一步，按自己的节奏来。',content:'完成了一半以上，真不错。',celebrate:'全部完成！一起庆祝一下。'};
+  const messages={idle:'还没有待办，今天慢慢来。',sad:'还没开始也没关系，我陪你',waiting:'已经迈出一步，按自己的节奏来。',content:'完成了一半以上，真不错。',celebrate:'全部完成！一起庆祝一下。'};
   $('moodMessage').textContent=messages[progress.mood];$('petCaption').textContent=progress.mood==='idle'?'今天的清单还空着':labels[progress.mood][0];
 }
 function renderTasks(){
