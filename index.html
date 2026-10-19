@@ -436,7 +436,7 @@ render();
 const presetControls=document.createElement('div');presetControls.className='preset-controls';presetControls.append(chooseButton);document.querySelector('.paper-inside').append(presetControls);
 
 const topPresetButton=document.createElement('button');topPresetButton.id='topPresetButton';topPresetButton.className='outline-button';topPresetButton.textContent='选择伙伴 ♡';topPresetButton.addEventListener('click',openPreset);$('backupOpen').before(topPresetButton);
-document.addEventListener('pet-state-ready',()=>{const pet=state.activePet;if(!pet){openPreset();return;}if(pet.presetRevision!==2&&['小猫','小狗'].includes(pet.name))selectPreset(pet.species);});
+document.addEventListener('pet-state-ready',async()=>{const pet=state.activePet;if(pet&&pet.presetRevision!==2&&['小猫','小狗'].includes(pet.name))await selectPreset(pet.species);openPreset();});
 
 // Day records live beside the existing state record; no database migration or task reset.
 let calendarEntries={},calendarWrites=new Set(),calendarSequence=0;
