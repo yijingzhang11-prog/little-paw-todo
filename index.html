@@ -113,6 +113,33 @@ body{background:#f8f8f7}.topbar{height:60px;padding:0 24px;max-width:900px;borde
 .calendar-day{overflow:hidden}
 .calendar-day .calendar-number{z-index:1;background:#ffffffdc;border-radius:3px;padding:1px 2px;left:2px;top:2px}
 .calendar-day img{top:-7%;left:-23%;width:146%;height:auto;object-fit:contain;object-position:center top}
+/* Tablet portrait and landscape: fit paper to the visible viewport. */
+@media(min-width:601px) and (max-width:1400px){
+ .topbar{height:48px;max-width:1000px;padding:0 20px;gap:8px}
+ .layout{max-width:1000px;padding:0 12px}
+ .paper,.paper:has(.task-row:nth-child(n+8)){height:calc(100svh - 84px - env(safe-area-inset-bottom,0px));min-height:440px;width:min(100%,calc((100svh - 84px)*.74));margin:0 auto;aspect-ratio:auto}
+ .paper .paper-inside,.paper:has(.task-row:nth-child(n+8)) .paper-inside{display:flex;flex-direction:column;height:100%;min-height:0;padding:calc((100svh - 84px)*.265) 10% 46px}
+ .paper .date{flex:none;margin:0 0 10px;font-size:14px;line-height:1.5}
+ .paper .task-section{flex:1;min-height:95px;display:flex;flex-direction:column}
+ .list-toolbar{flex:none;padding-bottom:5px}
+ #tasks{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+ .task-row{min-height:40px;gap:10px}
+ .paper .task-text{padding:8px 0 7px;font-size:18px}
+ .task-row input[type=checkbox]{width:22px;height:22px}
+ .task-row .delete-task{height:36px;width:26px}
+ .empty-tasks{padding:8px 0;flex:1;min-height:0}
+ .empty-tasks .tiny-star{display:none}
+ .empty-tasks p{margin:5px 0;font-size:13px}
+ .add-task{flex:none;margin-top:4px;padding:3px 0}
+ .paper #newTask{font-size:18px;padding:5px 0}
+ .pet-section{flex:none;margin-top:7px}
+ .pet-stage{height:clamp(90px,16svh,165px)}
+ #petImages img{width:clamp(90px,16svh,165px);height:clamp(90px,16svh,165px)}
+ .mood-message{font-size:11px;margin:0 0 4px;line-height:1.5}
+ .pet-caption{font-size:9px;line-height:1.4}
+ .preset-controls{display:none}
+ footer{font-size:9px;line-height:1.4;margin:6px 8px;padding-bottom:env(safe-area-inset-bottom,0px)}
+}
 </style></head>
 <body>
 <header class="topbar"><a class="brand" href="./" aria-label="Little Paw 首页"><span class="paw">♧</span> little paw<span class="brand-sub">宠物陪伴清单</span></a><button class="text-button" id="backupOpen">备份与恢复 ↗</button></header>
