@@ -79,6 +79,36 @@ body{background:#f8f8f7}.topbar{height:60px;padding:0 24px;max-width:900px;borde
  #presetCards p{font-size:11px;margin-bottom:5px}
  #presetCards .dark-button{font-size:11px;padding:7px 8px!important}
 }
+#calendarOpen{margin-right:12px;white-space:nowrap}
+#calendarDialog{width:min(570px,calc(100% - 24px));padding:22px;max-height:calc(100svh - 24px)}
+#calendarDialog h2{font-size:23px;margin:7px 0;font-weight:400}
+.calendar-hint,.calendar-note,.calendar-summary{font-size:12px;line-height:1.6;color:#777;margin:7px 0}
+.calendar-note{font-size:10px;margin-top:12px}.calendar-summary{color:#444}
+.calendar-nav{display:flex;align-items:center;gap:10px;margin:14px 0 10px}
+.calendar-nav h3{flex:1;text-align:center;font-size:18px;font-weight:400;margin:0}
+.calendar-nav button{padding:5px 10px;border:1px solid #ddd;border-radius:7px;font-size:20px}
+#calendarToday{font-size:11px;padding:8px}
+.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.calendar-weekdays{text-align:center;font-size:11px;color:#777;margin-bottom:7px}
+.calendar-day{position:relative;aspect-ratio:1/1.2;border:1px solid #e8e7e2;border-radius:8px;min-width:0;background:#fff}
+.calendar-day.is-today{border-color:#555;box-shadow:inset 0 0 0 1px #555}
+.calendar-number{position:absolute;top:3px;left:5px;font-size:10px;color:#555;line-height:1}
+.calendar-day img{position:absolute;top:15px;left:0;width:100%;height:calc(100% - 16px);object-fit:contain}
+@media(max-width:600px){
+ #calendarOpen{font-size:9px;margin-right:4px}
+ #topPresetButton{margin-right:0;padding:7px 5px}
+ .topbar{padding:0 9px;gap:4px}
+ #calendarDialog{padding:14px 12px}
+ #calendarDialog h2{font-size:21px}
+ .calendar-hint{font-size:11px}
+ .calendar-nav{gap:6px;margin:10px 0}
+ .calendar-nav h3{font-size:16px}
+ .calendar-weekdays,.calendar-grid{gap:3px}
+ .calendar-day{border-radius:5px;aspect-ratio:1/1.3}
+ .calendar-number{left:4px;font-size:9px}
+ .calendar-summary{font-size:11px}
+ .calendar-note{font-size:10px}
+}
 </style></head>
 <body>
 <header class="topbar"><a class="brand" href="./" aria-label="Little Paw 首页"><span class="paw">♧</span> little paw<span class="brand-sub">宠物陪伴清单</span></a><button class="text-button" id="backupOpen">备份与恢复 ↗</button></header>
@@ -106,11 +136,30 @@ body{background:#f8f8f7}.topbar{height:60px;padding:0 24px;max-width:900px;borde
 <div id="previewPanel" hidden><div class="preview-pair"><figure><img id="originalPreview" alt="原始宠物照片"><figcaption>真实的它</figcaption></figure><figure class="checker"><img id="candidatePreview" alt="生成的卡通主形象"><figcaption>手绘的它 · 初始等待</figcaption></figure></div><p class="hint">看看脸型、耳朵和花纹是否像它。确认后，我们只修改表情与必要动作。</p><p id="portraitCheck" class="check-status"></p><div class="button-row"><button id="portraitRetry" class="outline-button">重新生成</button><button id="portraitRecheck" class="outline-button" hidden>重试检查</button><button id="portraitConfirm" class="dark-button">像它！生成四种心情 →</button></div><button id="newPhoto" class="text-button small">重新上传照片</button></div>
 <div id="moodsPanel" hidden><p class="hint">四张独立透明 PNG，同一形象、同一画布、同一落脚位置。</p><div id="moodGrid" class="mood-grid"></div><button id="generateMoods" class="dark-button full">继续生成未完成的心情</button><label class="review-check"><input type="checkbox" id="reviewConfirm">我已检查：外貌花纹一致、表情清晰、身体不透明；庆祝只有两只举起的前爪和两只着地的后脚。</label><button id="activatePet" class="dark-button full" disabled>确认四种心情，开始陪伴 ♡</button><button id="backPortrait" class="text-button small">返回主形象预览</button></div>
 <div id="busyStatus" role="status" hidden><span class="spinner"></span><span id="busyText"></span><small>生成可能需要几分钟。已完成的素材会逐张保存。</small></div><div id="customError" class="error" role="alert" hidden></div><details class="config-help"><summary>生图服务与配置说明</summary><p id="configDetail"></p><p>需要服务器设置 GEMINI_API_KEY，并拥有模型权限和额度。密钥不要填在网页中。任务勾选只切换保存的图片，不会触发生图。</p></details></dialog>
-<dialog id="backupDialog"><div class="dialog-top"><span class="eyebrow">KEEP THE LITTLE THINGS</span><button class="icon-button" id="closeBackup" aria-label="关闭备份窗口">×</button></div><h2>备份你的清单</h2><p class="hint">清单保存在当前设备的这个浏览器中，不会同步到其他设备。建议定期导出备份；清除网站数据或使用无痕模式可能导致记录丢失。</p><button id="exportBackup" class="dark-button full">下载清单备份 ↓</button><label class="outline-button import-label">选择备份文件（JSON）<input type="file" id="importBackup" accept="application/json,.json"></label><p id="importSummary" class="hint" hidden></p><button id="confirmImport" class="dark-button full" hidden>用此备份替换当前清单</button><p id="backupError" class="error" hidden></p></dialog>
+<dialog id="backupDialog"><div class="dialog-top"><span class="eyebrow">KEEP THE LITTLE THINGS</span><button class="icon-button" id="closeBackup" aria-label="关闭备份窗口">×</button></div><h2>备份你的清单</h2><p class="hint">清单和陪伴日历保存在当前设备的这个浏览器中，不会同步到其他设备。建议定期导出备份；清除网站数据或使用无痕模式可能导致记录丢失。</p><button id="exportBackup" class="dark-button full">下载清单与日历备份 ↓</button><label class="outline-button import-label">选择备份文件（JSON）<input type="file" id="importBackup" accept="application/json,.json"></label><p id="importSummary" class="hint" hidden></p><button id="confirmImport" class="dark-button full" hidden>用此备份替换清单与日历</button><p id="backupError" class="error" hidden></p></dialog>
 
 <dialog id="importPetDialog"><div class="dialog-top"><span class="eyebrow">BRING YOUR OWN LITTLE FRIEND</span><button id="closeImportPet" class="icon-button" aria-label="关闭素材导入">×</button></div><h2>导入自己的宠物素材</h2><p class="hint">无需 API，图片只在本机处理。上传四张独立透明背景 PNG，可额外上传初始等待图。所有图片请使用相同的正方形画布，保持角色大小和落脚位置一致。</p><div class="field-row"><label>宠物名字<input id="importPetName" maxlength="30" placeholder="例如：奶糖"></label><label>宠物类型<select id="importPetSpecies"><option value="cat">猫咪</option><option value="dog">狗狗</option></select></label></div><div id="importPetGrid" class="mood-grid"></div><p class="hint">未提供初始等待图时，无任务会显示“轻微委屈”那张等待图，完成率仍为空，不会庆祝。图片统一缩放到 768 × 768，不会自动裁切或移动角色。</p><label class="review-check"><input type="checkbox" id="importPetReview">我已确认五种状态的外貌和位置一致、身体不透明、四种表情符合完成率；庆祝只有两只举起的前爪和两只着地的后脚。</label><div id="importPetError" class="error" role="alert" hidden></div><button id="useImportedPet" class="dark-button full" disabled>确认素材，开始陪伴 ♡</button></dialog>
 <div id="toast" role="status" hidden></div>
 <script>const MOODS = ['sad','waiting','content','celebrate'];
+function localDayKey(date=new Date()){
+  return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+}
+function dailySticker(state,date=new Date()){
+  if(!state.activePet)return null;
+  const pet=state.activePet,mood=taskProgress(state.tasks).mood;
+  return {date:localDayKey(date),species:pet.species,name:pet.name,mood,updatedAt:date.toISOString(),image:mood==='idle'?pet.base:pet.moods[mood]};
+}
+function validateCalendar(value){
+  const result={};
+  if(!value||typeof value!=='object'||Array.isArray(value))return result;
+  for(const [key,item] of Object.entries(value)){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(key)||localDayKey(new Date(key+'T12:00:00'))!==key||!item)continue;
+    if(!['cat','dog','guinea','parrot'].includes(item.species)||!['idle',...MOODS].includes(item.mood))continue;
+    if(typeof item.image!=='string'||item.image.length>300000||!/^data:image\/png;base64,iVBOR[A-Za-z0-9+/=]+$/.test(item.image))continue;
+    result[key]={date:key,species:item.species,name:typeof item.name==='string'?item.name.slice(0,30):'小伙伴',mood:item.mood,image:item.image,updatedAt:typeof item.updatedAt==='string'?item.updatedAt:''};
+  }
+  return result;
+}
 function recoverStoredState(value){
   try{return {state:validateBackup(value),recovered:false};}catch(error){
     // Task recovery must not depend on the integrity of generated pet images.
@@ -168,7 +217,8 @@ function validateBackup(value){
     const moods={};for(const key of MOODS)if(d.moods?.[key]){if(!png(d.moods[key]))throw Error('备份中的心情格式无效。');moods[key]=d.moods[key];}
     draft={photo:d.photo,species:d.species,name:d.name,notes:d.notes,candidate:d.candidate||null,candidateChecked:d.candidateChecked===true,confirmed:d.confirmed||null,moods,checks:Object.fromEntries(MOODS.map(k=>[k,d.checks?.[k]===true])),errors:{}};
   }
-  return {version:1,tasks,activePet:pet(value.activePet),draft};
+  const lastActivityAt=typeof value.lastActivityAt==='string'&&Number.isFinite(Date.parse(value.lastActivityAt))?value.lastActivityAt:null;
+  return {version:1,tasks,activePet:pet(value.activePet),draft,calendar:validateCalendar(value.calendar),lastActivityAt};
 }
 
 const $=id=>document.getElementById(id);
@@ -182,7 +232,9 @@ function readState(){return new Promise((resolve,reject)=>{const r=db.transactio
 function storageError(){ $('saveStatus').textContent='未能保存 · 请下载备份';$('saveStatus').className='storage-error';notify('这次修改未能保存。请先下载清单备份，再关闭页面。');}
 async function save(){
   if(!db||!storageReady){storageError();return;}
+  state.lastActivityAt=new Date().toISOString();
   const snapshot=copy(state);
+  recordCompanionDay(snapshot);
   try{const key='little-paw-task-safety-v1';const prior=localStorage.getItem(key);if(prior)localStorage.setItem(key+'-previous',prior);localStorage.setItem(key,JSON.stringify({version:1,tasks:snapshot.tasks,activePet:null,draft:null}));}catch{}
 
   return new Promise(resolve=>{try{const tx=db.transaction('records','readwrite');tx.objectStore('records').put(snapshot,'state');tx.oncomplete=()=>{$('saveStatus').textContent='已保存到本机 · 建议备份';$('saveStatus').className='';resolve();};tx.onerror=tx.onabort=()=>{storageError();resolve();};}catch{storageError();resolve();}});
@@ -281,9 +333,9 @@ $('portraitConfirm').addEventListener('click',async()=>{if(busy||!state.draft?.c
 $('generateMoods').addEventListener('click',allMoods);$('reviewConfirm').addEventListener('change',renderWizard);$('activatePet').addEventListener('click',async()=>{const d=state.draft;if(busy||!d||!$('reviewConfirm').checked||!MOODS.every(k=>d.moods[k]&&d.checks[k]))return;state.activePet={name:d.name,species:d.species,base:d.confirmed,moods:copy(d.moods)};state.draft=null;await save();$('customDialog').close();render();notify('它已经准备好陪你啦。');});
 $('backPortrait').addEventListener('click',()=>{if(busy)return;state.draft.confirmed=null;save();renderWizard();});
 $('backupOpen').addEventListener('click',()=>{$('backupError').hidden=true;$('importSummary').hidden=true;$('confirmImport').hidden=true;$('importBackup').value='';pendingImport=null;showDialog('backupDialog');});$('closeBackup').addEventListener('click',()=>$('backupDialog').close());
-$('exportBackup').addEventListener('click',()=>fileDownload(JSON.stringify(state),'little-paw-backup-'+new Date().toISOString().slice(0,10)+'.json'));
-$('importBackup').addEventListener('change',async()=>{pendingImport=null;$('confirmImport').hidden=true;$('backupError').hidden=true;try{const f=$('importBackup').files[0];if(!f)return;if(f.size>40*1024*1024)throw Error('备份文件不能超过 40 MB。');const next=validateBackup(JSON.parse(await f.text()));await verifyImportedImages(next);pendingImport=next;$('importSummary').textContent='备份包含 '+next.tasks.length+' 个任务，'+(next.activePet?'1 位伙伴':'未选择伙伴')+'。导入后会替换当前清单，建议先下载现有备份。';$('importSummary').hidden=false;$('confirmImport').hidden=false;}catch(e){$('backupError').textContent=e.message;$('backupError').hidden=false;}});
-$('confirmImport').addEventListener('click',async()=>{if(!pendingImport)return;if(busy){notify('请等待当前生成结束后再恢复备份。');return;}state=pendingImport;pendingImport=null;lastPet=null;await save();render();renderWizard();$('backupDialog').close();notify('已导入备份。');});
+$('exportBackup').addEventListener('click',async()=>{try{const calendar=await exportCalendarEntries();fileDownload(JSON.stringify({...state,calendar}),'little-paw-backup-'+localDayKey()+'.json');}catch{notify('备份未能导出，请稍后重试。');}});
+$('importBackup').addEventListener('change',async()=>{pendingImport=null;$('confirmImport').hidden=true;$('backupError').hidden=true;try{const f=$('importBackup').files[0];if(!f)return;if(f.size>40*1024*1024)throw Error('备份文件不能超过 40 MB。');const next=validateBackup(JSON.parse(await f.text()));await verifyImportedImages(next);pendingImport=next;$('importSummary').textContent='备份包含 '+next.tasks.length+' 个任务，'+(next.activePet?'1 位伙伴':'未选择伙伴')+'，'+Object.keys(next.calendar||{}).length+' 天日历贴纸。导入后会替换当前清单和日历，建议先下载现有备份。';$('importSummary').hidden=false;$('confirmImport').hidden=false;}catch(e){$('backupError').textContent=e.message;$('backupError').hidden=false;}});
+$('confirmImport').addEventListener('click',async()=>{if(!pendingImport)return;if(busy){notify('请等待当前生成结束后再恢复备份。');return;}try{await importCalendarEntries(pendingImport.calendar||{});}catch{notify('日历恢复失败，当前清单尚未替换。');return;}state=pendingImport;delete state.calendar;pendingImport=null;lastPet=null;await save();render();renderWizard();$('backupDialog').close();notify('已导入备份。');});
 async function checkConfig(){config={configured:false,model:'未使用',storage:'browser'};renderWizard();}
 new ResizeObserver(lace).observe(document.querySelector('.paper'));
 (async()=>{try{db=await openDB();const saved=await readState();if(saved){const restored=recoverStoredState(saved);state=restored.state;if(restored.recovered){await new Promise((resolve,reject)=>{const tx=db.transaction('records','readwrite');tx.objectStore('records').put(saved,'recovery-original-'+Date.now());tx.oncomplete=resolve;tx.onerror=tx.onabort=()=>reject(tx.error);});notify('任务已恢复；宠物素材异常，请重新选择伙伴。原记录已保留。');}if(saved.draft&&!$('presetDialog'))notify('已恢复定制进度，可以继续生成或重试。');}else{const safety=localStorage.getItem('little-paw-task-safety-v1');if(safety){state=validateBackup(JSON.parse(safety));notify('已从本机安全副本恢复任务。');}}storageReady=true;$('saveStatus').textContent='本机清单 · 建议定期备份';}catch{storageError();notify('旧数据读取失败，已暂停写入以保护原记录。请勿清除浏览器数据。');}function updateDate(){const now=new Date();$('today').textContent=new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(now);$('today').setAttribute('aria-label','今天的日期');}updateDate();setInterval(updateDate,60000);$('app').hidden=false;render();checkConfig();if(storageReady)document.dispatchEvent(new Event('pet-state-ready'));else{$('addTask').querySelectorAll('input,button').forEach(el=>el.disabled=true);}})();
@@ -381,4 +433,70 @@ const presetControls=document.createElement('div');presetControls.className='pre
 
 const topPresetButton=document.createElement('button');topPresetButton.id='topPresetButton';topPresetButton.className='outline-button';topPresetButton.textContent='选择伙伴 ♡';topPresetButton.addEventListener('click',openPreset);$('backupOpen').before(topPresetButton);
 document.addEventListener('pet-state-ready',()=>{const pet=state.activePet;if(!pet){openPreset();return;}if(pet.presetRevision!==2&&['小猫','小狗'].includes(pet.name))selectPreset(pet.species);});
+
+// Day records live beside the existing state record; no database migration or task reset.
+let calendarEntries={},calendarWrites=new Set(),calendarSequence=0;
+const calendarLatest=new Map();
+let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+function readCalendarEntries(){
+  return new Promise((resolve,reject)=>{
+    const entries={},request=db.transaction('records').objectStore('records').openCursor(IDBKeyRange.bound('calendar:','calendar:\uffff'));
+    request.onsuccess=()=>{const cursor=request.result;if(!cursor){resolve(validateCalendar(entries));return;}entries[cursor.key.slice(9)]=cursor.value;cursor.continue();};request.onerror=()=>reject(request.error);
+  });
+}
+function recordCompanionDay(snapshot,date=new Date()){
+  if(!storageReady||!db)return Promise.resolve();
+  const sticker=dailySticker(snapshot,date);if(!sticker)return Promise.resolve();
+  const sequence=++calendarSequence;calendarLatest.set(sticker.date,sequence);
+  const operation=(async()=>{
+    const img=await imageLoad(sticker.image),canvas=document.createElement('canvas');canvas.width=canvas.height=192;
+    canvas.getContext('2d').drawImage(img,0,0,192,192);sticker.image=canvas.toDataURL('image/png');
+    if(calendarLatest.get(sticker.date)!==sequence)return;
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction('records','readwrite'),store=tx.objectStore('records'),read=store.get('calendar:'+sticker.date);let written=false;
+      read.onsuccess=()=>{if(!read.result||read.result.updatedAt<=sticker.updatedAt){store.put(sticker,'calendar:'+sticker.date);written=true;}};
+      tx.oncomplete=()=>{if(written)calendarEntries[sticker.date]=sticker;resolve();};tx.onerror=tx.onabort=()=>reject(tx.error);
+    });
+    if($('calendarDialog').open)renderCalendar();
+  })().catch(()=>{notify('今天的贴纸未能保存，请稍后重试或下载备份。');});
+  calendarWrites.add(operation);operation.finally(()=>calendarWrites.delete(operation));return operation;
+}
+async function exportCalendarEntries(){await Promise.all([...calendarWrites]);return db?await readCalendarEntries():calendarEntries;}
+async function importCalendarEntries(entries){
+  await Promise.all([...calendarWrites]);
+  // Preserve the prior calendar before applying the explicitly confirmed backup replacement.
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction('records','readwrite'),store=tx.objectStore('records');
+    store.put(calendarEntries,'calendar-before-import-'+Date.now());
+    const request=store.openCursor(IDBKeyRange.bound('calendar:','calendar:\uffff'));
+    request.onsuccess=()=>{const cursor=request.result;if(cursor){cursor.delete();cursor.continue();}else for(const [day,sticker] of Object.entries(entries))store.put(sticker,'calendar:'+day);};
+    tx.oncomplete=resolve;tx.onerror=tx.onabort=()=>reject(tx.error);
+  });calendarEntries=entries;
+}
+const calendarButton=document.createElement('button');calendarButton.id='calendarOpen';calendarButton.className='text-button';calendarButton.textContent='陪伴日历';$('backupOpen').before(calendarButton);
+const calendarDialog=document.createElement('dialog');calendarDialog.id='calendarDialog';calendarDialog.innerHTML='<div class="dialog-top"><span class="eyebrow">OUR LITTLE DAYS</span><button id="closeCalendar" class="icon-button" aria-label="关闭陪伴日历">×</button></div><h2>陪伴日历</h2><p class="calendar-hint">把每天最后的小表情，留在这一天。</p><div class="calendar-nav"><button id="calendarPrev" aria-label="上个月">‹</button><h3 id="calendarMonth" aria-live="polite"></h3><button id="calendarNext" aria-label="下个月">›</button><button id="calendarToday">本月</button></div><div class="calendar-weekdays" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div><div id="calendarGrid" class="calendar-grid" aria-label="每日伙伴贴纸"></div><p id="calendarSummary" class="calendar-summary" role="status"></p><p class="calendar-note">当天贴纸随使用更新，过往日期保留最后状态。未使用的日子留空。记录仅保存在此浏览器，可随清单一起备份。</p>';document.body.append(calendarDialog);
+const calendarMoodNames={idle:'安静等待',sad:'可怜巴巴',waiting:'还在等你',content:'温柔满足',celebrate:'开心庆祝'};
+function renderCalendar(){
+  const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth(),today=localDayKey();
+  $('calendarMonth').textContent=year+'年'+(month+1)+'月';const grid=$('calendarGrid');grid.replaceChildren();
+  const offset=(new Date(year,month,1).getDay()+6)%7,days=new Date(year,month+1,0).getDate();let count=0;
+  for(let i=0;i<offset;i++){const cell=document.createElement('div');cell.className='calendar-blank';cell.setAttribute('aria-hidden','true');grid.append(cell);}
+  for(let day=1;day<=days;day++){
+    const key=localDayKey(new Date(year,month,day)),entry=calendarEntries[key],cell=document.createElement('div');cell.className='calendar-day'+(key===today?' is-today':'');
+    const number=document.createElement('span');number.className='calendar-number';number.textContent=day;cell.append(number);if(key===today)cell.setAttribute('aria-current','date');
+    if(entry){const img=document.createElement('img');img.src=entry.image;img.alt=key+' '+entry.name+' · '+calendarMoodNames[entry.mood];cell.title=img.alt;cell.append(img);count++;}else cell.setAttribute('aria-label',key+(key>today?' 尚未到来':' 暂无贴纸'));
+    grid.append(cell);
+  }
+  $('calendarSummary').textContent=count?'这个月，留下了 '+count+' 天的陪伴。':'这个月还没有贴纸，和小伙伴从今天开始吧。';
+}
+calendarButton.addEventListener('click',async()=>{
+  if(!storageReady){notify('清单尚未读取成功，请先保留原浏览器数据。');return;}
+  try{await Promise.all([...calendarWrites]);calendarEntries=await readCalendarEntries();calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCalendar();showDialog('calendarDialog');}catch{notify('日历暂时无法读取，请稍后重试。');}
+});
+$('closeCalendar').addEventListener('click',()=>calendarDialog.close());
+for(const [id,offset] of [['calendarPrev',-1],['calendarNext',1]])$(id).addEventListener('click',()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+offset,1);renderCalendar();});
+$('calendarToday').addEventListener('click',()=>{calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCalendar();});
+document.addEventListener('pet-state-ready',async()=>{try{calendarEntries=await readCalendarEntries();if(state.lastActivityAt)await recordCompanionDay(copy(state),new Date(state.lastActivityAt));await recordCompanionDay(copy(state));}catch{notify('日历暂时无法读取，原清单仍可使用。');}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&storageReady)recordCompanionDay(copy(state));});
+window.addEventListener('focus',()=>{if(storageReady)recordCompanionDay(copy(state));});
 </script></body></html>
