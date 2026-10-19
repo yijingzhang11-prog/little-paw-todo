@@ -109,6 +109,10 @@ body{background:#f8f8f7}.topbar{height:60px;padding:0 24px;max-width:900px;borde
  .calendar-summary{font-size:11px}
  .calendar-note{font-size:10px}
 }
+/* Crop transparent padding in the display only, keeping the original daily snapshot. */
+.calendar-day{overflow:hidden}
+.calendar-day .calendar-number{z-index:1;background:#ffffffdc;border-radius:3px;padding:1px 2px;left:2px;top:2px}
+.calendar-day img{top:-7%;left:-23%;width:146%;height:auto;object-fit:contain;object-position:center top}
 </style></head>
 <body>
 <header class="topbar"><a class="brand" href="./" aria-label="Little Paw 首页"><span class="paw">♧</span> little paw<span class="brand-sub">宠物陪伴清单</span></a><button class="text-button" id="backupOpen">备份与恢复 ↗</button></header>
