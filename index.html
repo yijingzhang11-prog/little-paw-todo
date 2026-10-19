@@ -57,6 +57,28 @@ body{background:#f8f8f7}.topbar{height:60px;padding:0 24px;max-width:900px;borde
 
 .paper .task-text,.paper #newTask{font-family:PetScriptWeb,PetRound,'Microsoft YaHei',cursive!important;font-weight:400;font-style:normal}
 
+/* Four companions fit together in the picker. */
+#presetDialog{width:min(620px,calc(100% - 24px));padding:22px 24px;max-height:calc(100svh - 24px);overflow-y:auto}
+#presetDialog h2{margin:8px 0;font-size:22px}
+#presetDialog>.hint{margin:6px 0 14px;font-size:12px;line-height:1.6}
+#presetCards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#presetCards .mood-card{min-width:0;text-align:center;padding:8px}
+#presetCards img{display:block;width:100%!important;height:clamp(84px,17svh,142px)!important;object-fit:contain}
+#presetCards h3{margin:3px 0;font-size:15px;font-weight:400}
+#presetCards p{margin:3px 0 7px;font-size:12px;line-height:1.4}
+#presetCards .dark-button{margin:0!important;padding:8px 12px!important;font-size:12px;min-height:34px}
+@media(max-width:600px){
+ #presetDialog{padding:14px 16px;margin:auto}
+ #presetDialog .dialog-top .eyebrow{font-size:8px;letter-spacing:1px}
+ #presetDialog h2{font-size:20px;margin:5px 0}
+ #presetDialog>.hint{font-size:11px;margin:5px 0 10px}
+ #presetCards{gap:8px}
+ #presetCards .mood-card{padding:5px}
+ #presetCards img{height:clamp(70px,16svh,128px)!important}
+ #presetCards h3{font-size:14px}
+ #presetCards p{font-size:11px;margin-bottom:5px}
+ #presetCards .dark-button{font-size:11px;padding:7px 8px!important}
+}
 </style></head>
 <body>
 <header class="topbar"><a class="brand" href="./" aria-label="Little Paw 首页"><span class="paw">♧</span> little paw<span class="brand-sub">宠物陪伴清单</span></a><button class="text-button" id="backupOpen">备份与恢复 ↗</button></header>
